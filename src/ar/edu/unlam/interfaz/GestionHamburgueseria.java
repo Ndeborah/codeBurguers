@@ -1,4 +1,9 @@
-package ar.edu.unlam.codeBurguers;
+package ar.edu.unlam.interfaz;
+
+import ar.edu.unlam.codeBurguers.OpcionesPedido;
+import ar.edu.unlam.codeBurguers.Pedido;
+import ar.edu.unlam.codeBurguers.StockDeProductos;
+import ar.edu.unlam.codeBurguers.TipoHamburguesa;
 
 import java.util.Scanner;
 
@@ -6,7 +11,7 @@ public class GestionHamburgueseria {
     private static final long cantidadBase = 5L;
     private static final long precioBase = 10L;
     private final Scanner scanner;
-    private ProductStock[] stocks;
+    private StockDeProductos[] stocks;
 
     public GestionHamburgueseria(Scanner scanner) {
         this.scanner = scanner;
@@ -14,9 +19,9 @@ public class GestionHamburgueseria {
     }
 
     private void inicializarStock() {
-        this.stocks = new ProductStock[TipoHamburguesa.values().length];
+        this.stocks = new StockDeProductos[TipoHamburguesa.values().length];
         for (int i = 0; i < TipoHamburguesa.values().length; i++) {
-            this.stocks[i] = new ProductStock(
+            this.stocks[i] = new StockDeProductos(
                     TipoHamburguesa.values()[i],
                     TipoHamburguesa.values()[i].toString(),
                     cantidadBase,
@@ -27,7 +32,7 @@ public class GestionHamburgueseria {
 
     public void imprimirStockActual() {
         System.out.println("🍔STOCK ACTUAL🍔");
-        for (ProductStock stock : stocks) {
+        for (StockDeProductos stock : stocks) {
             System.out.println(stock);
             System.out.println("---------------------------");
         }

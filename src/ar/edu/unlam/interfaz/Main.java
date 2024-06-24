@@ -1,6 +1,5 @@
 package ar.edu.unlam.interfaz;
 
-import ar.edu.unlam.codeBurguers.GestionHamburgueseria;
 import ar.edu.unlam.codeBurguers.OpcionesMenu;
 
 import java.util.Scanner;
@@ -55,7 +54,7 @@ public class Main {
                 """
                         Ingrese el número de la opción deseada:
                         1. Ingresar pedido
-                        2. Modificar productStocks
+                        2. Modificar productos
                         3. Realizar promociones
                         4. Controlar stock
                         5. Salir

@@ -1,5 +1,5 @@
 package ar.edu.unlam.codeBurguers;
 
-public enum FormasDePago {
+public enum MedioDePago {
     EFECTIVO, TARJETA_DE_DEBITO, TARJETA_DE_CREDITO, BILLETERA_VIRTUAL;
 }

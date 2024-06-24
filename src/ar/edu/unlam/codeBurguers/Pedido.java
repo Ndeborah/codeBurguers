@@ -6,10 +6,10 @@ public class Pedido {
     private final static double DESCUENTO_PAGO_TARJETA_DE_DEBITO = 0.25;
     private final static double DESCUENTO_PAGO_BILLETERA_VIRTUAL = 0.10;
 
-    private final ProductStock[] stock;
+    private final StockDeProductos[] stock;
     private final ProductPedido[] productPedidos;
 
-    public Pedido(ProductStock[] stock) {
+    public Pedido(StockDeProductos[] stock) {
         this.stock = stock;
         this.productPedidos = new ProductPedido[stock.length];
         inicializarPedido();
@@ -28,6 +28,22 @@ public class Pedido {
         if (stock[tipoHamburguesa.ordinal()].decrementarStock(cantidad)) {
             productPedidos[tipoHamburguesa.ordinal()].incrementarCantidad(cantidad);
         }
+    }
+    public void agregarMedioDePago(MedioDePago medioDePago){
+       /* Pedido pedido = new Pedido(this.);
+        OpcionesPedido opcionElegida;
+        do {
+            opcionElegida = obtenerOpcionesPedido();
+            switch (opcionElegida) {
+                case :
+
+                    break;
+                case FINALIZAR_PEDIDO:
+
+                    break;
+                case SALIR:
+            }
+        } while (opcionElegida != OpcionesPedido.SALIR);*/
     }
 
     public double obtenerTotal() {

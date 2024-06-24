@@ -1,22 +1,19 @@
 package ar.edu.unlam.codeBurguers;
 
-public class ProductStock {
+public class StockDeProductos {
     private TipoHamburguesa tipoHamburguesa;
     private String nombre;
     private long stock;
     private double precio;
 
 
-    public ProductStock(TipoHamburguesa tipoHamburguesa, String nombre, long cantidad, double precio) {
+    public StockDeProductos(TipoHamburguesa tipoHamburguesa, String nombre, long cantidad, double precio) {
         this.tipoHamburguesa = tipoHamburguesa;
         this.stock = cantidad;
         this.nombre = nombre;
         this.precio = precio;
     }
 
-    public double obtenerSubtotal() {
-        return this.stock * this.precio;
-    }
 
     public boolean decrementarStock(long cantidadAReservar) {
         if (cantidadAReservar > this.stock) {
