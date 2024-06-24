@@ -1,6 +1,5 @@
 package ar.edu.unlam.interfaz;
 
-import ar.edu.unlam.codeBurguers.GestionHamburgueseria;
 import ar.edu.unlam.codeBurguers.OpcionesMenu;
 
 import java.util.Scanner;

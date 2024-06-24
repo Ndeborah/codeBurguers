@@ -49,4 +49,58 @@ public class Pedido {
      }
      System.out.println("TOTAL: " + obtenerTotal());
     }
+    
+    
+    public double pagarPedido(FormasDePago opcion) {
+
+		double total= obtenerTotal();
+		
+		switch(opcion) {
+		
+		case EFECTIVO:
+			total-=total*DESCUENTO_PAGO_EFECTIVO;
+			break;
+			
+		case TARJETA_DE_DEBITO:
+			total-=total*DESCUENTO_PAGO_TARJETA_DE_DEBITO;
+			break;
+			
+		case TARJETA_DE_CREDITO:
+			total-=total*DESCUENTO_PAGO_TARJETA_DE_CREDITO;
+			break;
+			
+		case BILLETERA_VIRTUAL:
+			total-=total*DESCUENTO_PAGO_BILLETERA_VIRTUAL;
+			break;
+		}
+				
+		return total;
+	}
+    
+    public int costoPorZona(ZonasDeEnvio opcion) {
+
+		int envio= 0;
+		
+		switch(opcion) {
+		
+		case SAN_JUSTO:
+			envio+=50;
+			break;
+			
+		case RAMOS_MEJIA:
+		case LOMAS_DEL_MIRADOR:
+		case VILLA_LUZURIAGA:
+		case LA_TABLADA:
+			envio+=80;
+			break;
+			
+		case HAEDO:
+		case MORON:
+			envio+=100;
+			break;
+			
+		}
+				
+		return envio;
+	}
 }

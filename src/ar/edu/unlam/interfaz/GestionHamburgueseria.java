@@ -1,4 +1,6 @@
-package ar.edu.unlam.codeBurguers;
+package ar.edu.unlam.interfaz;
+
+import ar.edu.unlam.codeBurguers.*;
 
 import java.util.Scanner;
 
@@ -7,6 +9,7 @@ public class GestionHamburgueseria {
     private static final long precioBase = 10L;
     private final Scanner scanner;
     private ProductStock[] stocks;
+    private double totalDeCostoDelPedido=0;
 
     public GestionHamburgueseria(Scanner scanner) {
         this.scanner = scanner;
@@ -44,8 +47,13 @@ public class GestionHamburgueseria {
                     pedirYAgregarProducto(pedido);
                     break;
                 case FINALIZAR_PEDIDO:
+                	System.out.println("\n");
                     finalizarPedido(pedido);
+                    System.out.println("\n");
+                	pagarPedido(pedido);
                     break;
+                case ENVIO_A_DOMICILIO:
+                	costoDeEnvio(pedido);
                 case SALIR:
             }
         } while (opcionElegida != OpcionesPedido.SALIR);
@@ -87,5 +95,46 @@ public class GestionHamburgueseria {
 
         return TipoHamburguesa.values()[codigo - 1];
     }
+    
+    private FormasDePago obtenerTipoDePago() {
+        int opcion;
+        do {
+            System.out.print("Ingrese la opcion de pago: \n");
+            for (int i = 0; i < FormasDePago.values().length; i++) {
+                System.out.println("Opcion " + (i + 1) + ": " + FormasDePago.values()[i].toString());
+            }
+            opcion = Character.getNumericValue(scanner.next().toLowerCase().charAt(0));
+        } while (opcion > FormasDePago.values().length || opcion == 0);
 
+        return FormasDePago.values()[opcion- 1];
+    }
+    private void pagarPedido(Pedido pedido) {
+    	FormasDePago formaDePago = this.obtenerTipoDePago();
+        double totalAPagar = pedido.pagarPedido(formaDePago);
+        this.totalDeCostoDelPedido = totalAPagar;
+        System.out.println("Descuento de "+ (pedido.obtenerTotal()-totalAPagar) + " pesos\n");
+        System.out.println("Pago total con descuento :" + totalAPagar + "\n");
+        
+    }
+    
+    private ZonasDeEnvio zonasDeEnvio() {
+        int opcion;
+        do {
+            System.out.println("Elija su lugar de envio: ");
+            for (int i = 0; i < ZonasDeEnvio.values().length; i++) {
+                System.out.println("Opcion " + (i + 1) + ": " + ZonasDeEnvio.values()[i].toString());
+            }
+            opcion = Character.getNumericValue(scanner.next().charAt(0));
+        } while (opcion > ZonasDeEnvio.values().length || opcion == 0);
+        return ZonasDeEnvio.values()[opcion - 1];
+    }
+    
+    private void costoDeEnvio(Pedido pedido) {
+    	ZonasDeEnvio precioPorZona = this.zonasDeEnvio();
+        double totalAPagar = (pedido.costoPorZona(precioPorZona) + this.totalDeCostoDelPedido);
+        System.out.println("Valor del envio a la zona: "+ pedido.costoPorZona(precioPorZona));
+        System.out.println("\nPrecio total con el envio :" + totalAPagar + "\n");
+        
+    }
+    
 }
