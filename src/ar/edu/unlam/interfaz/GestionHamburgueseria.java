@@ -9,7 +9,6 @@ public class GestionHamburgueseria {
     private static final long precioBase = 10L;
     private final Scanner scanner;
     private ProductStock[] stocks;
-    private double totalDeCostoDelPedido=0;
 
     public GestionHamburgueseria(Scanner scanner) {
         this.scanner = scanner;
@@ -47,20 +46,21 @@ public class GestionHamburgueseria {
                     pedirYAgregarProducto(pedido);
                     break;
                 case FINALIZAR_PEDIDO:
-                	System.out.println("\n");
+                    System.out.println("\n");
                     finalizarPedido(pedido);
                     System.out.println("\n");
-                	pagarPedido(pedido);
-                    break;
-                case ENVIO_A_DOMICILIO:
-                	costoDeEnvio(pedido);
+                    opcionDeEnvio(pedido);
+                    System.out.println("\n");
+                    pagarPedido(pedido);
+                    System.out.println("\n");
+                    return;
                 case SALIR:
             }
         } while (opcionElegida != OpcionesPedido.SALIR);
     }
 
     private void finalizarPedido(Pedido pedido) {
-        pedido.imprimirPedido();
+        pedido.finalizarCarga();
     }
 
     private OpcionesPedido obtenerOpcionesPedido() {
@@ -95,28 +95,8 @@ public class GestionHamburgueseria {
 
         return TipoHamburguesa.values()[codigo - 1];
     }
-    
-    private FormasDePago obtenerTipoDePago() {
-        int opcion;
-        do {
-            System.out.print("Ingrese la opcion de pago: \n");
-            for (int i = 0; i < FormasDePago.values().length; i++) {
-                System.out.println("Opcion " + (i + 1) + ": " + FormasDePago.values()[i].toString());
-            }
-            opcion = Character.getNumericValue(scanner.next().toLowerCase().charAt(0));
-        } while (opcion > FormasDePago.values().length || opcion == 0);
 
-        return FormasDePago.values()[opcion- 1];
-    }
-    private void pagarPedido(Pedido pedido) {
-    	FormasDePago formaDePago = this.obtenerTipoDePago();
-        double totalAPagar = pedido.pagarPedido(formaDePago);
-        this.totalDeCostoDelPedido = totalAPagar;
-        System.out.println("Descuento de "+ (pedido.obtenerTotal()-totalAPagar) + " pesos\n");
-        System.out.println("Pago total con descuento :" + totalAPagar + "\n");
-        
-    }
-    
+
     private ZonasDeEnvio zonasDeEnvio() {
         int opcion;
         do {
@@ -128,13 +108,41 @@ public class GestionHamburgueseria {
         } while (opcion > ZonasDeEnvio.values().length || opcion == 0);
         return ZonasDeEnvio.values()[opcion - 1];
     }
-    
-    private void costoDeEnvio(Pedido pedido) {
-    	ZonasDeEnvio precioPorZona = this.zonasDeEnvio();
-        double totalAPagar = (pedido.costoPorZona(precioPorZona) + this.totalDeCostoDelPedido);
-        System.out.println("Valor del envio a la zona: "+ pedido.costoPorZona(precioPorZona));
-        System.out.println("\nPrecio total con el envio :" + totalAPagar + "\n");
-        
+
+    public void opcionDeEnvio(Pedido pedido) {
+        char opcion;
+
+        System.out.println("¿Desea realizar envio a domicilio? S / N");
+        do {
+            opcion = scanner.next().toLowerCase().charAt(0);
+            switch (opcion) {
+                case 's':
+                    pedido.realizarEnvio(zonasDeEnvio());
+                    return;
+                case 'n':
+                    return;
+                default:
+                    System.out.println("La opción ingresada es incorrecta, intente nuevamente.");
+            }
+        } while (true);
     }
-    
+
+    private FormasDePago obtenerTipoDePago() {
+        int opcion;
+        do {
+            System.out.print("Ingrese la opcion de pago: \n");
+            for (int i = 0; i < FormasDePago.values().length; i++) {
+                System.out.println("Opcion " + (i + 1) + ": " + FormasDePago.values()[i].toString());
+            }
+            opcion = Character.getNumericValue(scanner.next().toLowerCase().charAt(0));
+        } while (opcion > FormasDePago.values().length || opcion == 0);
+
+        return FormasDePago.values()[opcion - 1];
+    }
+
+    private void pagarPedido(Pedido pedido) {
+        FormasDePago formasDePago = obtenerTipoDePago();
+        pedido.pagarPedido(formasDePago);
+    }
+
 }
