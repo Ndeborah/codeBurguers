@@ -30,8 +30,6 @@ public class Main {
                     break;
                 case MODIFICAR_PRODUCTOS:
                     break;
-                case REALIZAR_PROMOCIONES:
-                    break;
                 case CONTROLAR_STOCK:
                     hamburgueseria.imprimirStockActual();
                     break;
@@ -54,10 +52,9 @@ public class Main {
                 """
                         Ingrese el número de la opción deseada:
                         1. Ingresar pedido
-                        2. Modificar productStocks
-                        3. Realizar promociones
-                        4. Controlar stock
-                        5. Salir
+                        2. Modificar stock de productos
+                        3. Controlar stock
+                        4. Salir
                         """
         );
 
