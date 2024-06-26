@@ -26,7 +26,7 @@ public class ProductPedido {
     public String toString() {
         return  "Tipo De Hamburguesa: " + tipoHamburguesa +
                 "\nPrecio: " + precio +
-                "\nCantidad: " + cantidad +
+                " Cantidad: " + cantidad +
                 "\nSubtotal: " + obtenerSubtotal();
     }
 }

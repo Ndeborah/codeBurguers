@@ -29,6 +29,8 @@ public class Main {
                     hamburgueseria.completarPedido();
                     break;
                 case MODIFICAR_PRODUCTOS:
+                    hamburgueseria.imprimirStockActual();
+                    hamburgueseria.modificarProductos();
                     break;
                 case CONTROLAR_STOCK:
                     hamburgueseria.imprimirStockActual();
