@@ -49,7 +49,7 @@ public class Pedido {
     }
 
     public void imprimirPedido() {
-        System.out.println(ANSI_CYAN + "Pedido Actual:" + ANSI_RESET);
+        System.out.println(ANSI_CYAN + "\nPedido Actual:" + ANSI_RESET);
 
         for (ProductPedido item : productPedidos) {
             if (item.getCantidad() > 0) {
