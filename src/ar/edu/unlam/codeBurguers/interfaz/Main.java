@@ -1,6 +1,6 @@
-package ar.edu.unlam.interfaz;
+package ar.edu.unlam.codeBurguers.interfaz;
 
-import ar.edu.unlam.codeBurguers.OpcionesMenu;
+import ar.edu.unlam.codeBurguers.enums.OpcionesMenu;
 
 import java.util.Scanner;
 

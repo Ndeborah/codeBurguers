@@ -1,4 +1,8 @@
-package ar.edu.unlam.codeBurguers;
+package ar.edu.unlam.codeBurguers.dominio;
+
+import ar.edu.unlam.codeBurguers.enums.FormasDePago;
+import ar.edu.unlam.codeBurguers.enums.TipoHamburguesa;
+import ar.edu.unlam.codeBurguers.enums.ZonasDeEnvio;
 
 public class Pedido {
     private final static double DESCUENTO_PAGO_EFECTIVO = 0.15;
@@ -6,21 +10,21 @@ public class Pedido {
     private final static double DESCUENTO_PAGO_TARJETA_DE_DEBITO = 0.25;
     private final static double DESCUENTO_PAGO_BILLETERA_VIRTUAL = 0.10;
 
-    private final ProductStock[] stock;
-    private final ProductPedido[] productPedidos;
+    private final StockDeProductos[] stock;
+    private final Item[] productPedidos;
     private double costoInicial = 0;
     private double costoEnvio = 0;
     private double costoConDescuento = 0;
 
-    public Pedido(ProductStock[] stock) {
+    public Pedido(StockDeProductos[] stock) {
         this.stock = stock;
-        this.productPedidos = new ProductPedido[stock.length];
+        this.productPedidos = new Item[stock.length];
         inicializarPedido();
     }
 
     private void inicializarPedido() {
         for (int i = 0; i < TipoHamburguesa.values().length; i++) {
-            this.productPedidos[i] = new ProductPedido(
+            this.productPedidos[i] = new Item(
                     TipoHamburguesa.values()[i],
                     this.stock[i].getPrecio()
             );
@@ -33,45 +37,44 @@ public class Pedido {
         }
     }
 
-    public void finalizarCarga() {
+    public void actualizarCosto() {
         this.costoInicial = calcularCostoInicial();
         this.costoConDescuento = costoInicial;
-        this.imprimirPedido();
     }
 
     private double calcularCostoInicial() {
         double total = 0.0;
-        for (ProductPedido item : productPedidos) {
+        for (Item item : productPedidos) {
             total += item.obtenerSubtotal();
         }
 
         return total;
     }
 
-    public void imprimirPedido() {
-        System.out.println(ANSI_CYAN + "\nPedido Actual:" + ANSI_RESET);
+    public String toString() {
+        String texto = "";
+        texto = texto + ANSI_CYAN + "\nPedido Actual:" + ANSI_RESET;
 
-        for (ProductPedido item : productPedidos) {
+        for (Item item : productPedidos) {
             if (item.getCantidad() > 0) {
-                System.out.println(item);
+                texto = texto + "\n" + item;
             }
 
         }
+        texto = texto + "\n" + ANSI_GREEN + "TOTAL PRODUCTOS: " + ANSI_RESET + this.costoInicial;
+        texto = texto + "\n" + ANSI_GREEN + "TOTAL CON DESCUENTO: " + ANSI_RESET + this.costoConDescuento;
+        texto = texto + "\n" + ANSI_GREEN + "TOTAL ENVIO: " + ANSI_RESET + this.costoEnvio;
+        texto = texto + "\n" + ANSI_GREEN + "TOTAL: " + ANSI_RESET + (this.costoConDescuento + this.costoEnvio);
 
-        System.out.println(ANSI_GREEN + "TOTAL PRODUCTOS: " + ANSI_RESET + this.costoInicial);
-        System.out.println(ANSI_GREEN + "TOTAL CON DESCUENTO: " + ANSI_RESET + this.costoConDescuento);
-        System.out.println(ANSI_GREEN + "TOTAL ENVIO: " + ANSI_RESET + this.costoEnvio);
-        System.out.println(ANSI_GREEN + "TOTAL: " + ANSI_RESET + (this.costoConDescuento + this.costoEnvio));
+        return texto;
     }
 
     public void realizarEnvio(ZonasDeEnvio zona) {
         this.costoEnvio = this.costoPorZona(zona);
-        this.imprimirPedido();
     }
 
     public void pagarPedido(FormasDePago formaDePago) {
         this.costoConDescuento = this.calcularTotalConDescuento(formaDePago);
-        this.imprimirPedido();
     }
 
     private double calcularTotalConDescuento(FormasDePago opcion) {
@@ -125,6 +128,7 @@ public class Pedido {
 
         return envio;
     }
+
     public static final String ANSI_BLACK = "\u001B[30m";
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";

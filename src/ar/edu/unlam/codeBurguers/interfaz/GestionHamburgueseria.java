@@ -1,6 +1,10 @@
-package ar.edu.unlam.interfaz;
+package ar.edu.unlam.codeBurguers.interfaz;
 
-import ar.edu.unlam.codeBurguers.*;
+import ar.edu.unlam.codeBurguers.dominio.*;
+import ar.edu.unlam.codeBurguers.enums.FormasDePago;
+import ar.edu.unlam.codeBurguers.enums.OpcionesPedido;
+import ar.edu.unlam.codeBurguers.enums.TipoHamburguesa;
+import ar.edu.unlam.codeBurguers.enums.ZonasDeEnvio;
 
 import java.util.Scanner;
 
@@ -8,7 +12,7 @@ public class GestionHamburgueseria {
     private static long cantidadBase = 10;
     private static long precioBase = 1000;
     private final Scanner scanner;
-    private ProductStock[] stocks;
+    private StockDeProductos[] stocks;
 
     public GestionHamburgueseria(Scanner scanner) {
         this.scanner = scanner;
@@ -24,9 +28,9 @@ public class GestionHamburgueseria {
     }
 
     private void inicializarStock() {
-        this.stocks = new ProductStock[TipoHamburguesa.values().length];
+        this.stocks = new StockDeProductos[TipoHamburguesa.values().length];
         for (int i = 0; i < TipoHamburguesa.values().length; i++) {
-            this.stocks[i] = new ProductStock(
+            this.stocks[i] = new StockDeProductos(
                     TipoHamburguesa.values()[i],
                     TipoHamburguesa.values()[i].toString(),
                     cantidadBase,
@@ -38,16 +42,16 @@ public class GestionHamburgueseria {
     public void imprimirStockActual() {
         ordenarProductosPorStockMayorAMenor(stocks);
         System.out.println("🍔STOCK ACTUAL🍔\n");
-        for (ProductStock stock : stocks) {
+        for (StockDeProductos stock : stocks) {
             System.out.println(stock);
             System.out.println("------------------------------------------------------");
         }
         System.out.println("🍔🍔🍔");
     }
 
-    public ProductStock[] ordenarProductosPorStockMayorAMenor(ProductStock [] stocks) {
+    public StockDeProductos[] ordenarProductosPorStockMayorAMenor(StockDeProductos[] stocks) {
 
-        ProductStock auxiliar=null;
+        StockDeProductos auxiliar=null;
 
         for (int i = 0; i < stocks.length; i++) {
             for (int j = 0; j < stocks.length - (i + 1); j++) {
@@ -68,23 +72,18 @@ public class GestionHamburgueseria {
             switch (opcionElegida) {
                 case AGREGAR_PRODUCTO:
                     pedirYAgregarProducto(pedido);
+                    pedido.actualizarCosto();
+                    System.out.println(pedido);
                     break;
                 case FINALIZAR_PEDIDO:
-                    System.out.println("\n");
-                    finalizarPedido(pedido);
-                    System.out.println("\n");
                     opcionDeEnvio(pedido);
-                    System.out.println("\n");
+                    System.out.println(pedido);
                     pagarPedido(pedido);
-                    System.out.println("\n");
+                    System.out.println(pedido);
                     return;
                 case SALIR:
             }
         } while (opcionElegida != OpcionesPedido.SALIR);
-    }
-
-    private void finalizarPedido(Pedido pedido) {
-        pedido.finalizarCarga();
     }
 
     private OpcionesPedido obtenerOpcionesPedido() {
@@ -169,8 +168,8 @@ public class GestionHamburgueseria {
         pedido.pagarPedido(formasDePago);
     }
 
-    private ProductStock obtenerProductoStockSegunElTipo(TipoHamburguesa tipoHamburguesa) {
-        for (ProductStock prod : this.stocks) {
+    private StockDeProductos obtenerProductoStockSegunElTipo(TipoHamburguesa tipoHamburguesa) {
+        for (StockDeProductos prod : this.stocks) {
             if (prod.getTipoHamburguesa().equals(tipoHamburguesa)) {
                 return prod;
             }
@@ -203,7 +202,7 @@ public class GestionHamburgueseria {
     public void agregarCantidadAStock() {
         TipoHamburguesa tipo = this.obtenerTipoDeHamburguesa();
         long cant = obtenerCantidad();
-        ProductStock productoStock = this.obtenerProductoStockSegunElTipo(tipo);
+        StockDeProductos productoStock = this.obtenerProductoStockSegunElTipo(tipo);
         if (productoStock == null) {
             System.out.println("No se puede agregar el producto a stock.");
         } else {
@@ -213,7 +212,7 @@ public class GestionHamburgueseria {
     public void cambiarPrecio() {
         TipoHamburguesa tipo = this.obtenerTipoDeHamburguesa();
         long precioNuevo = obtenerCantidad();
-        ProductStock productoStock = this.obtenerProductoStockSegunElTipo(tipo);
+        StockDeProductos productoStock = this.obtenerProductoStockSegunElTipo(tipo);
         if (productoStock == null) {
             System.out.println("No se encuentra el producto en el stock");
         } else {

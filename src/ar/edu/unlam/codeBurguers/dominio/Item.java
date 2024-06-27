@@ -1,11 +1,13 @@
-package ar.edu.unlam.codeBurguers;
+package ar.edu.unlam.codeBurguers.dominio;
 
-public class ProductPedido {
+import ar.edu.unlam.codeBurguers.enums.TipoHamburguesa;
+
+public class Item {
     private final TipoHamburguesa tipoHamburguesa;
     private final double precio;
     private long cantidad = 0;
 
-    public ProductPedido(TipoHamburguesa tipoHamburguesa, double precio) {
+    public Item(TipoHamburguesa tipoHamburguesa, double precio) {
         this.tipoHamburguesa = tipoHamburguesa;
         this.precio = precio;
     }

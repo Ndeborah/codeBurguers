@@ -1,4 +1,4 @@
-package ar.edu.unlam.codeBurguers;
+package ar.edu.unlam.codeBurguers.enums;
 
 public enum FormasDePago {
     EFECTIVO, 

@@ -1,13 +1,15 @@
-package ar.edu.unlam.codeBurguers;
+package ar.edu.unlam.codeBurguers.dominio;
 
-public class ProductStock {
+import ar.edu.unlam.codeBurguers.enums.TipoHamburguesa;
+
+public class StockDeProductos {
     private TipoHamburguesa tipoHamburguesa;
     private String nombre;
     private long stock;
     private double precio;
 
 
-    public ProductStock(TipoHamburguesa tipoHamburguesa, String nombre, long cantidad, double precio) {
+    public StockDeProductos(TipoHamburguesa tipoHamburguesa, String nombre, long cantidad, double precio) {
         this.tipoHamburguesa = tipoHamburguesa;
         this.stock = cantidad;
         this.nombre = nombre;
