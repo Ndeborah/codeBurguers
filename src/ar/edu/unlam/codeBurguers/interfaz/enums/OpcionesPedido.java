@@ -1,4 +1,4 @@
-package ar.edu.unlam.codeBurguers.enums;
+package ar.edu.unlam.codeBurguers.interfaz.enums;
 
 public enum OpcionesPedido {
     AGREGAR_PRODUCTO,

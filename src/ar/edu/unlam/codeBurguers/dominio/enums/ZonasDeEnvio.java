@@ -1,4 +1,4 @@
-package ar.edu.unlam.codeBurguers.enums;
+package ar.edu.unlam.codeBurguers.dominio.enums;
 
 public enum ZonasDeEnvio {
 	SAN_JUSTO,

@@ -1,8 +1,10 @@
 package ar.edu.unlam.codeBurguers.dominio;
 
-import ar.edu.unlam.codeBurguers.enums.FormasDePago;
-import ar.edu.unlam.codeBurguers.enums.TipoHamburguesa;
-import ar.edu.unlam.codeBurguers.enums.ZonasDeEnvio;
+import ar.edu.unlam.codeBurguers.dominio.enums.FormasDePago;
+import ar.edu.unlam.codeBurguers.dominio.enums.TipoHamburguesa;
+import ar.edu.unlam.codeBurguers.dominio.enums.ZonasDeEnvio;
+
+import static ar.edu.unlam.codeBurguers.dominio.Colores.*;
 
 public class Pedido {
     private final static double DESCUENTO_PAGO_EFECTIVO = 0.15;
@@ -10,54 +12,40 @@ public class Pedido {
     private final static double DESCUENTO_PAGO_TARJETA_DE_DEBITO = 0.25;
     private final static double DESCUENTO_PAGO_BILLETERA_VIRTUAL = 0.10;
 
-    private final StockDeProductos[] stock;
-    private final Item[] productPedidos;
+    private final ControlDeStock stock;
+    private final ItemDePedido[] productPedidos;
     private double costoInicial = 0;
     private double costoEnvio = 0;
     private double costoConDescuento = 0;
 
-    public Pedido(StockDeProductos[] stock) {
-        this.stock = stock;
-        this.productPedidos = new Item[stock.length];
-        inicializarPedido();
+    public Pedido(ControlDeStock controlDeStock) {
+        this.stock = controlDeStock;
+        this.productPedidos = controlDeStock.crearItemsParaPedir();
     }
 
-    private void inicializarPedido() {
-        for (int i = 0; i < TipoHamburguesa.values().length; i++) {
-            this.productPedidos[i] = new Item(
-                    TipoHamburguesa.values()[i],
-                    this.stock[i].getPrecio()
-            );
-        }
-    }
-
-    public void agregarProducto(TipoHamburguesa tipoHamburguesa, long cantidad) {
-        if (stock[tipoHamburguesa.ordinal()].decrementarStock(cantidad)) {
+    public ResultadoAccion agregarProducto(TipoHamburguesa tipoHamburguesa, long cantidad) {
+        ResultadoAccion resultadoAccion = this.stock.decrementarStock(tipoHamburguesa, cantidad);
+        if (resultadoAccion.isExito()) {
             productPedidos[tipoHamburguesa.ordinal()].incrementarCantidad(cantidad);
+            this.actualizarCosto();
+            return resultadoAccion;
         }
+        return resultadoAccion;
     }
 
-    public void actualizarCosto() {
+    private void actualizarCosto() {
         this.costoInicial = calcularCostoInicial();
         this.costoConDescuento = costoInicial;
     }
 
-    private double calcularCostoInicial() {
-        double total = 0.0;
-        for (Item item : productPedidos) {
-            total += item.obtenerSubtotal();
-        }
-
-        return total;
-    }
 
     public String toString() {
         String texto = "";
         texto = texto + ANSI_CYAN + "\nPedido Actual:" + ANSI_RESET;
 
-        for (Item item : productPedidos) {
-            if (item.getCantidad() > 0) {
-                texto = texto + "\n" + item;
+        for (ItemDePedido itemDePedido : productPedidos) {
+            if (itemDePedido.getCantidad() > 0) {
+                texto = texto + "\n" + itemDePedido;
             }
 
         }
@@ -75,6 +63,15 @@ public class Pedido {
 
     public void pagarPedido(FormasDePago formaDePago) {
         this.costoConDescuento = this.calcularTotalConDescuento(formaDePago);
+    }
+
+    private double calcularCostoInicial() {
+        double total = 0.0;
+        for (ItemDePedido itemDePedido : productPedidos) {
+            total += itemDePedido.obtenerSubtotal();
+        }
+
+        return total;
     }
 
     private double calcularTotalConDescuento(FormasDePago opcion) {
@@ -128,14 +125,4 @@ public class Pedido {
 
         return envio;
     }
-
-    public static final String ANSI_BLACK = "\u001B[30m";
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_YELLOW = "\u001B[33m";
-    public static final String ANSI_BLUE = "\u001B[34m";
-    public static final String ANSI_PURPLE = "\u001B[35m";
-    public static final String ANSI_CYAN = "\u001B[36m";
-    public static final String ANSI_WHITE = "\u001B[37m";
-    public static final String ANSI_RESET = "\u001B[0m";
 }

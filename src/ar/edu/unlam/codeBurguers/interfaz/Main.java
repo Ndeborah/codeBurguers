@@ -1,28 +1,57 @@
 package ar.edu.unlam.codeBurguers.interfaz;
 
-import ar.edu.unlam.codeBurguers.enums.OpcionesMenu;
+import ar.edu.unlam.codeBurguers.dominio.ControlDeStock;
+import ar.edu.unlam.codeBurguers.dominio.ItemDeStock;
+import ar.edu.unlam.codeBurguers.dominio.enums.TipoHamburguesa;
+import ar.edu.unlam.codeBurguers.interfaz.enums.OpcionesMenu;
+import ar.edu.unlam.codeBurguers.interfaz.enums.OpcionesPedido;
 
 import java.util.Scanner;
 
 public class Main {
+    private static long cantidadBase = 10;
+    private static long precioBase = 1000;
     private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        imprimirMenu();
+        ItemDeStock[] itemDeStocks = inicializarStock();
+        ControlDeStock controlDeStock = new ControlDeStock(itemDeStocks);
+        GestionHamburgueseria gestor = new GestionHamburgueseria(scanner, controlDeStock);
+        imprimirMenu(gestor);
     }
 
-    private static void imprimirMenu() {
+    private static ItemDeStock[] inicializarStock() {
+        ItemDeStock[] items = new ItemDeStock[TipoHamburguesa.values().length];
+        for (int i = 0; i < TipoHamburguesa.values().length; i++) {
+            items[i] = new ItemDeStock(
+                    TipoHamburguesa.values()[i],
+                    TipoHamburguesa.values()[i].toString(),
+                    cantidadBase,
+                    precioBase
+            );
+        }
+        return items;
+    }
+
+    private static void imprimirMenu(GestionHamburgueseria gestor) {
         imprimirPortada();
-        GestionHamburgueseria hamburgueseria = new GestionHamburgueseria(scanner);
-        selector(hamburgueseria);
+        selector(gestor);
+    }
+
+    private static OpcionesMenu obtenerOpcionesMenu() {
+        int opcion;
+        do {
+            opcion = Herramientas.getCodigoDePantalla();
+        } while (opcion > OpcionesMenu.values().length || opcion <= 0);
+
+        return OpcionesMenu.values()[opcion - 1];
     }
 
     private static void selector(GestionHamburgueseria hamburgueseria) {
         OpcionesMenu opcionElegida;
         do {
             imprimirOpciones();
-            int opcionIngresada = ingresarNumero();
-            opcionElegida = obtenerOpcion(opcionIngresada - 1);
+            opcionElegida = obtenerOpcionesMenu();
             switch (opcionElegida) {
                 case INGRESAR_PEDIDO:
                     hamburgueseria.imprimirStockActual();
@@ -60,14 +89,6 @@ public class Main {
                         """
         );
 
-    }
-
-    private static OpcionesMenu obtenerOpcion(int opcion) {
-        return OpcionesMenu.values()[opcion];
-    }
-
-    private static int ingresarNumero() {
-        return scanner.nextInt();
     }
 
     private static void opcionIncorrecta() {

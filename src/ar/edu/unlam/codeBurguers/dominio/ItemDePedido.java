@@ -1,13 +1,16 @@
 package ar.edu.unlam.codeBurguers.dominio;
 
-import ar.edu.unlam.codeBurguers.enums.TipoHamburguesa;
+import ar.edu.unlam.codeBurguers.dominio.enums.TipoHamburguesa;
 
-public class Item {
+/**
+ * El ítem de pedido representa un ítem en un pedido. Disminuirá el stock cuando se finalice el pedido.
+ */
+public class ItemDePedido {
     private final TipoHamburguesa tipoHamburguesa;
     private final double precio;
     private long cantidad = 0;
 
-    public Item(TipoHamburguesa tipoHamburguesa, double precio) {
+    public ItemDePedido(TipoHamburguesa tipoHamburguesa, double precio) {
         this.tipoHamburguesa = tipoHamburguesa;
         this.precio = precio;
     }

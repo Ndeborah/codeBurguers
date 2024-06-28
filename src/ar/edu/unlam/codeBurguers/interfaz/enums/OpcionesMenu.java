@@ -1,4 +1,4 @@
-package ar.edu.unlam.codeBurguers.enums;
+package ar.edu.unlam.codeBurguers.interfaz.enums;
 
 public enum OpcionesMenu {
     INGRESAR_PEDIDO,//el recepcionista ingresa el pedido(revisar stock), la zona a entregar(revisar zona), el medio de pago(revisar formas de pago)

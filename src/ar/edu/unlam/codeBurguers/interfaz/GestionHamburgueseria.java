@@ -1,78 +1,43 @@
 package ar.edu.unlam.codeBurguers.interfaz;
 
 import ar.edu.unlam.codeBurguers.dominio.*;
-import ar.edu.unlam.codeBurguers.enums.FormasDePago;
-import ar.edu.unlam.codeBurguers.enums.OpcionesPedido;
-import ar.edu.unlam.codeBurguers.enums.TipoHamburguesa;
-import ar.edu.unlam.codeBurguers.enums.ZonasDeEnvio;
+import ar.edu.unlam.codeBurguers.dominio.enums.FormasDePago;
+import ar.edu.unlam.codeBurguers.interfaz.enums.OpcionesPedido;
+import ar.edu.unlam.codeBurguers.dominio.enums.TipoHamburguesa;
+import ar.edu.unlam.codeBurguers.dominio.enums.ZonasDeEnvio;
 
 import java.util.Scanner;
 
+import static ar.edu.unlam.codeBurguers.dominio.Colores.ANSI_GREEN;
+import static ar.edu.unlam.codeBurguers.dominio.Colores.ANSI_RESET;
+
 public class GestionHamburgueseria {
-    private static long cantidadBase = 10;
-    private static long precioBase = 1000;
+
     private final Scanner scanner;
-    private StockDeProductos[] stocks;
+    private final ControlDeStock controlDeStock;
 
-    public GestionHamburgueseria(Scanner scanner) {
+    public GestionHamburgueseria(Scanner scanner, ControlDeStock controlDeStock) {
         this.scanner = scanner;
-        inicializarStock();
-    }
-
-    public static void setCantidadBase(long cantidadBase) {
-        GestionHamburgueseria.cantidadBase = cantidadBase;
-    }
-
-    public static void setPrecioBase(long precioBase) {
-        GestionHamburgueseria.precioBase = precioBase;
-    }
-
-    private void inicializarStock() {
-        this.stocks = new StockDeProductos[TipoHamburguesa.values().length];
-        for (int i = 0; i < TipoHamburguesa.values().length; i++) {
-            this.stocks[i] = new StockDeProductos(
-                    TipoHamburguesa.values()[i],
-                    TipoHamburguesa.values()[i].toString(),
-                    cantidadBase,
-                    precioBase
-            );
-        }
+        this.controlDeStock = controlDeStock;
     }
 
     public void imprimirStockActual() {
-        ordenarProductosPorStockMayorAMenor(stocks);
         System.out.println("🍔STOCK ACTUAL🍔\n");
-        for (StockDeProductos stock : stocks) {
+        for (ItemDeStock stock : this.controlDeStock.getStockOrdenado()) {
             System.out.println(stock);
             System.out.println("------------------------------------------------------");
         }
         System.out.println("🍔🍔🍔");
     }
 
-    public StockDeProductos[] ordenarProductosPorStockMayorAMenor(StockDeProductos[] stocks) {
-
-        StockDeProductos auxiliar=null;
-
-        for (int i = 0; i < stocks.length; i++) {
-            for (int j = 0; j < stocks.length - (i + 1); j++) {
-                if (stocks[j] != null && stocks[j + 1] != null && stocks[j].getStock() < stocks[j + 1].getStock()) {
-                    auxiliar = stocks[j];
-                    stocks[j] = stocks[j + 1];
-                    stocks[j + 1] = auxiliar;
-                }
-            }
-        }return stocks;
-    }
-
     public void completarPedido() {
-        Pedido pedido = new Pedido(this.stocks);
+        Pedido pedido = new Pedido(this.controlDeStock);
         OpcionesPedido opcionElegida;
         do {
             opcionElegida = obtenerOpcionesPedido();
             switch (opcionElegida) {
                 case AGREGAR_PRODUCTO:
                     pedirYAgregarProducto(pedido);
-                    pedido.actualizarCosto();
                     System.out.println(pedido);
                     break;
                 case FINALIZAR_PEDIDO:
@@ -80,6 +45,7 @@ public class GestionHamburgueseria {
                     System.out.println(pedido);
                     pagarPedido(pedido);
                     System.out.println(pedido);
+                    System.out.println("Pedido finalizado exitosamente! 💸🍔");
                     return;
                 case SALIR:
             }
@@ -93,7 +59,7 @@ public class GestionHamburgueseria {
             for (int i = 0; i < OpcionesPedido.values().length; i++) {
                 System.out.println("Opcion " + (i + 1) + ": " + OpcionesPedido.values()[i].toString());
             }
-            opcion = Character.getNumericValue(scanner.next().charAt(0));
+            opcion = Herramientas.getCodigoDePantalla();
         } while (opcion > OpcionesPedido.values().length || opcion == 0);
         return OpcionesPedido.values()[opcion - 1];
     }
@@ -101,11 +67,12 @@ public class GestionHamburgueseria {
     private void pedirYAgregarProducto(Pedido pedido) {
         TipoHamburguesa tipoHamburguesa = this.obtenerTipoDeHamburguesa();
         int cantidad = this.obtenerCantidad();
-        pedido.agregarProducto(tipoHamburguesa, cantidad);
+        ResultadoAccion resultado = pedido.agregarProducto(tipoHamburguesa, cantidad);
+        System.out.println(resultado.getMensaje());
     }
 
     private int obtenerCantidad() {
-        System.out.println("Ingrese cantidad: ");
+        System.out.println("Ingresar: ");
         return scanner.nextInt();
     }
 
@@ -113,11 +80,12 @@ public class GestionHamburgueseria {
         int codigo;
         do {
             System.out.print("Ingrese el codigo de producto: ");
-            codigo = Character.getNumericValue(scanner.next().toLowerCase().charAt(0));
+            codigo = Herramientas.getCodigoDePantalla();
         } while (codigo > TipoHamburguesa.values().length || codigo == 0);
 
         return TipoHamburguesa.values()[codigo - 1];
     }
+
 
 
     private ZonasDeEnvio zonasDeEnvio() {
@@ -127,7 +95,7 @@ public class GestionHamburgueseria {
             for (int i = 0; i < ZonasDeEnvio.values().length; i++) {
                 System.out.println("Opcion " + (i + 1) + ": " + ZonasDeEnvio.values()[i].toString());
             }
-            opcion = Character.getNumericValue(scanner.next().charAt(0));
+            opcion = Herramientas.getCodigoDePantalla();
         } while (opcion > ZonasDeEnvio.values().length || opcion == 0);
         return ZonasDeEnvio.values()[opcion - 1];
     }
@@ -157,7 +125,7 @@ public class GestionHamburgueseria {
             for (int i = 0; i < FormasDePago.values().length; i++) {
                 System.out.println("Opcion " + (i + 1) + ": " + FormasDePago.values()[i].toString());
             }
-            opcion = Character.getNumericValue(scanner.next().toLowerCase().charAt(0));
+            opcion = Herramientas.getCodigoDePantalla();;
         } while (opcion > FormasDePago.values().length || opcion == 0);
 
         return FormasDePago.values()[opcion - 1];
@@ -168,16 +136,7 @@ public class GestionHamburgueseria {
         pedido.pagarPedido(formasDePago);
     }
 
-    private StockDeProductos obtenerProductoStockSegunElTipo(TipoHamburguesa tipoHamburguesa) {
-        for (StockDeProductos prod : this.stocks) {
-            if (prod.getTipoHamburguesa().equals(tipoHamburguesa)) {
-                return prod;
-            }
-        }
-
-        return null;
-    }
-    public void modificarProductos(){
+    public void modificarProductos() {
         char opcion;
 
         System.out.println("¿Qué modificación desea realizar?");
@@ -188,37 +147,32 @@ public class GestionHamburgueseria {
             switch (opcion) {
                 case 'p':
                     cambiarPrecio();
-                    System.out.println(ANSI_GREEN + "¡El precio se modificó con exito!" +ANSI_RESET );
+                    System.out.println(ANSI_GREEN + "¡El precio se modificó con exito!" + ANSI_RESET);
                     return;
                 case 'c':
                     agregarCantidadAStock();
-                    System.out.println(ANSI_GREEN + "¡La cantidad se modificó con exito!" +ANSI_RESET );
+                    System.out.println(ANSI_GREEN + "¡La cantidad se modificó con exito!" + ANSI_RESET);
                     return;
                 default:
                     System.out.println("La opción ingresada es incorrecta, intente nuevamente.");
             }
         } while (true);
     }
+
     public void agregarCantidadAStock() {
         TipoHamburguesa tipo = this.obtenerTipoDeHamburguesa();
         long cant = obtenerCantidad();
-        StockDeProductos productoStock = this.obtenerProductoStockSegunElTipo(tipo);
-        if (productoStock == null) {
-            System.out.println("No se puede agregar el producto a stock.");
-        } else {
-            productoStock.incrementarStock(cant);
-        }
+        long nuevaCantidad = this.controlDeStock.agregarCantidadAUnProducto(tipo, cant);
+        System.out.println("Cantidad añadida correctamente, la cantidad actual es de: " + nuevaCantidad);
     }
+
     public void cambiarPrecio() {
         TipoHamburguesa tipo = this.obtenerTipoDeHamburguesa();
         long precioNuevo = obtenerCantidad();
-        StockDeProductos productoStock = this.obtenerProductoStockSegunElTipo(tipo);
-        if (productoStock == null) {
-            System.out.println("No se encuentra el producto en el stock");
+        if (this.controlDeStock.cambiarPrecioDeUnProducto(tipo, precioNuevo)) {
+            System.out.println("El precio se ha agregado correctamente: \n Precio nuevo: " + precioNuevo);
         } else {
-            productoStock.setPrecio(precioNuevo);
+            System.out.println("El precio no se pudo modificar, producto no encontrado");
         }
     }
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_RESET = "\u001B[0m";
 }
